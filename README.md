@@ -49,41 +49,85 @@ dp[v][flag] = 以节点 v 为根、覆盖了 flag 所表示的所有组的最小
 
 由于优先队列始终先扩展代价最小的状态，第一个被弹出且覆盖全集的树必然是全局最优解。这类似于 Dijkstra 算法的贪心性质——DPBF 在状态空间图上运行了一个 Dijkstra。
 
-## ⚠️ 本仓库仅包含个人修改部分
-
-本项目基于一个已有的图算法框架 `graph_hash_of_mixed_weighted` 进行开发。该框架提供了：
-
-- 图的存储结构（`graph_v_of_v_idealID`、`graph_hash_of_mixed_weighted`）
-- 图格式转换工具（`graph_hash_of_mixed_weighted_to_graph_v_of_v_idealID`）
-- GSTP 输入解析（`graph_hash_of_mixed_weighted_read_for_GSTP`）
-- 树操作、日志输出等基础设施
-
-**本仓库中仅包含我编写的部分**——即 DPBF 算法的核心实现函数 `graph_v_of_v_idealID_DPBF_only_ec`。这个函数接收框架提供的图数据和分组信息，返回组斯坦纳树的最优代价。
-
-完整的项目需要将本文件放入框架的对应目录中，并链接框架代码一起编译。
-
 ## 文件结构
 
 ```
 DPBF大作业/
 ├── graph_v_of_v_idealID_DPBF_only_ec.h  # [本人编写] DPBF 核心算法 (~100 行)
 ├── 数据结构大作业报告.docx               # 大作业实验报告
-└── README.md                             # 本文件
+├── README.md                             # 本文件
+├── .gitignore                            # Git 忽略规则
+│
+└── GST-DPBF/                             # 完整可编译项目
+    ├── CMakeLists.txt                    # CMake 构建配置
+    ├── CppProperties.json                # VS 项目属性
+    ├── README.md                         # 项目详细说明（环境配置、数据格式等）
+    ├── img_1.png                         # 问题示意图
+    ├── src/
+    │   └── try_cpu.cpp                   # 主程序入口
+    ├── data/
+    │   ├── data0.csv ~ data9.csv         # 测试数据（图数据 + 分组信息）
+    │   └── result                         # 标准输出结果
+    └── rucgraph/                         # 图算法框架
+        ├── graph_v_of_v_idealID/
+        │   └── graph_v_of_v_idealID.h
+        ├── graph_hash_of_mixed_weighted/
+        │   ├── graph_hash_of_mixed_weighted.h
+        │   ├── graph_hash_of_mixed_weighted_binary_operations.h
+        │   └── two_graphs_operations/
+        │       └── graph_hash_of_mixed_weighted_to_graph_v_of_v_idealID.h
+        ├── graph_v_of_v_idealID_DPBF_only_ec.h          # [本人编写] DPBF 算法实现（同上）
+        ├── graph_hash_of_mixed_weighted_read_for_GSTP.h  # GSTP 数据输入
+        ├── graph_hash_of_mixed_weighted_generate_random_groups_of_vertices.h
+        ├── test_cpu.h                                     # 测试框架
+        └── text_mining/
+            ├── parse_string.h
+            └── print_items.h
 ```
 
-### 依赖（来自框架，非本仓库）
+### 本人编写的核心文件
 
-- `graph_hash_of_mixed_weighted` — 混合权重图数据结构
-- `graph_v_of_v_idealID` — 邻接表图表示
-- C++17 标准库 (`<vector>`, `<queue>`, `<unordered_set>`)
+- **`graph_v_of_v_idealID_DPBF_only_ec.h`**（根目录）：DPBF 算法独立版本，可单独查看
+- **`GST-DPBF/rucgraph/graph_v_of_v_idealID_DPBF_only_ec.h`**：集成在项目中的同一文件
 
-## 编译
+其余 `rucgraph/` 下的文件为框架代码，提供图的存储结构、格式转换、输入解析等基础设施。
 
-```bash
-# 需要将该文件放入 graph_hash_of_mixed_weighted 框架后编译
-g++ -std=c++17 -O2 -o dpbf your_main.cpp
+## 运行环境与编译
+
+详细的环境配置和运行说明请参见 **[GST-DPBF/README.md](GST-DPBF/README.md)**。
+
+简要步骤：
+
+- **操作系统**: Windows 11
+- **编译器**: Visual Studio 17 2022 (MSVC)
+- **依赖**: Boost 1.87, CMake 3.29+
+
+```cmd
+cd GST-DPBF
+mkdir build
+cd build
+cmake .. -G "Visual Studio 17 2022"
+cmake --build .
+./bin/Debug/DPBF.exe
+```
+
+预期输出（与 `GST-DPBF/data/result` 一致）：
+
+```
+start..
+------------------------------------------------------------
+iteration 0
+3
+------------------------------------------------------------
+iteration 1
+4
+...
+------------------------------------------------------------
+iteration 9
+18
 ```
 
 ## 参考
 
-该实现参考了关于 Group Steiner Tree 问题的 DPBF 精确算法论文，算法时间复杂度为 $O(3^k \cdot (n + m \log n))$，其中 $k$ 为组数，$n$ 为节点数，$m$ 为边数。
+- 算法参考论文：*Finding Top-k Min-Cost Connected Trees in Databases* — https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/icde07steiner.pdf
+- 原项目参考：https://github.com/SakuraMarble/GST-DPBF
