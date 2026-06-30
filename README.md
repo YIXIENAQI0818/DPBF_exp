@@ -49,16 +49,29 @@ dp[v][flag] = 以节点 v 为根、覆盖了 flag 所表示的所有组的最小
 
 由于优先队列始终先扩展代价最小的状态，第一个被弹出且覆盖全集的树必然是全局最优解。这类似于 Dijkstra 算法的贪心性质——DPBF 在状态空间图上运行了一个 Dijkstra。
 
+## ⚠️ 本仓库仅包含个人修改部分
+
+本项目基于一个已有的图算法框架 `graph_hash_of_mixed_weighted` 进行开发。该框架提供了：
+
+- 图的存储结构（`graph_v_of_v_idealID`、`graph_hash_of_mixed_weighted`）
+- 图格式转换工具（`graph_hash_of_mixed_weighted_to_graph_v_of_v_idealID`）
+- GSTP 输入解析（`graph_hash_of_mixed_weighted_read_for_GSTP`）
+- 树操作、日志输出等基础设施
+
+**本仓库中仅包含我编写的部分**——即 DPBF 算法的核心实现函数 `graph_v_of_v_idealID_DPBF_only_ec`。这个函数接收框架提供的图数据和分组信息，返回组斯坦纳树的最优代价。
+
+完整的项目需要将本文件放入框架的对应目录中，并链接框架代码一起编译。
+
 ## 文件结构
 
 ```
 DPBF大作业/
-├── graph_v_of_v_idealID_DPBF_only_ec.h  # DPBF 核心算法实现 (~100 行)
+├── graph_v_of_v_idealID_DPBF_only_ec.h  # [本人编写] DPBF 核心算法 (~100 行)
 ├── 数据结构大作业报告.docx               # 大作业实验报告
 └── README.md                             # 本文件
 ```
 
-### 依赖
+### 依赖（来自框架，非本仓库）
 
 - `graph_hash_of_mixed_weighted` — 混合权重图数据结构
 - `graph_v_of_v_idealID` — 邻接表图表示
@@ -67,7 +80,7 @@ DPBF大作业/
 ## 编译
 
 ```bash
-# 需要链接 graph_hash_of_mixed_weighted 库
+# 需要将该文件放入 graph_hash_of_mixed_weighted 框架后编译
 g++ -std=c++17 -O2 -o dpbf your_main.cpp
 ```
 
